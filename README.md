@@ -193,4 +193,5 @@ Here's the basic workflow again:
 1. Use `git add` to stage files.
 1. Use `git commit` or `git commit -m <some text>` to commit the staged files.
 
-
+In complex projects with multiple contributors, it will be important that you write good commit messages.
+See [this blog post](https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message) for details.
