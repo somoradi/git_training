@@ -106,19 +106,19 @@ Let us try to clone this very repository to your own computer so that you can ad
     Then `git clone` clones the repository into that folder. 
     You do not have to type the URL, just push `Shift + Insert`.
 
-~~~bash
-mkdir ~/training
-cd ~/training
-git clone https://github.com/CompLab-StonyBrook/git_training.git
-~~~
+    ~~~bash
+    mkdir ~/training
+    cd ~/training
+    git clone https://github.com/CompLab-StonyBrook/git_training.git
+    ~~~
 
 1.  You now have a folder `git_training` inside your training folder.
     If you don't like that name, you can rename the folder.
     The repository will still work fine.
 
-~~~bash
-mv git_training my_git_playground
-~~~
+    ~~~bash
+    mv git_training my_git_playground
+    ~~~
 
 
 ### Basic Git Workflow
@@ -199,6 +199,42 @@ The `.` is a common convention for including all possible matches.
 
 *Further reading:* In complex projects with multiple contributors, it will be important that you write good commit messages.
 See [this blog post](https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message) for details.
+
+
+### Ignoring Certain Files
+
+The `git add .` provides an easy means of staging all changed files.
+But sometimes you do not want to add all files.
+LaTeX, for instance, produces many temporary files that would only end up cluttering your revision history.
+We can instruct git to ignore certain files by adding a hidden file `.gitignore` to the repository.
+Any file listed in there will be ignored.
+You can write shorthands like `*.aux` to ignore all aux files.
+Here is a reasonable list for LaTeX projects.
+This file instructs git to ignore everything except files that end in a few tex-related extensions as well as anything contained in the subfolders `tex`, `bib`, `img`, `code`, and `pdf`.
+
+~~~
+*
+!.gitignore
+!*.bib
+!*.bst
+!*.clo
+!*.cls
+!*.dot
+!*.latexmain
+!*.py
+!*.sty
+!*.tex
+!*.tikz
+!tex/
+!bib/
+!bib/**/
+!img/
+!img/**/
+!code/
+!code/**/
+!pdf/
+!pdf/*.pdf
+~~~
 
 
 ### Remote Repositories
@@ -307,7 +343,9 @@ Now start gitk again.
 As you can see, the *playing with tags* commit is gone.
 All the changes we have made since the *clean* tag have been completely wiped from the record.
 
-Ideally, you won't have to use `git reset` very often, but sometimes you will want to experiment a bit and end up with crud in your history that should be excised.
+Ideally, you won't have to use `git reset` very often.
+In particular, do not use `git reset` to remove parts of the history that have already been synced to a remote repository.
+But sometimes you will want to experiment a bit and end up with crud in your history that should be excised before you push from your local repository to the remote.
 
 
 ### Branches
@@ -332,13 +370,96 @@ You could make a copy of the whole repository and work on that copy while you wa
 But then you'll have a revised version and the copy you have been working on in the meantime, with no clear idea how the two could be recombined into one document.
 That's a tough problem, but branches provide a simple solution:
 
-1. Create a new branch *my revisions*.
-1. Edit the files in this branch as you see fit.
-1. Once you get the feedback from your advisor, edit the files in the master branch, which are still exactly the same as when you submitted the file.
-1. Use git to merge the *my revisions* branch back into the master branch.
+1.  Create a tag *submitted_draft* with `git tag -a submitted_draft`.
+1.  Continue working on the files in the master branch as you see fit.
+1.  Once you get the feedback from your advisor, checkout the tag *submitted_draft* and create a branch *revisions*.
+
+    ~~~bash
+    git checkout submitted_draft -b revisions
+    ~~~
+
+1.  In the revisions branch, you now have all the files as they were in the submitted version.
+    Incorporate your advisor's feedback.
+1.  Use git to merge the *revisions* branch back into the master branch.
+
+    ~~~bash   
+    git checkout master
+    git merge revisions
+    ~~~
+
+Let us once again try a hands-on example with this repository.
+Let's start by adding some new files to the master branch and tagging the latest commit.
+
+~~~bash
+echo 'John likes Mary' > will_stay_the_same 
+echo 'Peter likes Mary, too\n I think' > will_be_changed
+echo 'Mary despises both' > will_be_deleted
+git add .
+git commit -m "added some test files"
+git tag -a branching_point
+~~~
+
+Then we make a change in the master branch, just like you would make revisions to your paper in the example above.
+
+~~~bash
+echo 'Peter does not like Mary' > will_be_changed
+git add .
+git commit -m "made a change for testing purposes"
+~~~
+
+Now we create a branch starting from the tag *branching_point* and make some changes.
+
+~~~bash
+git checkout branching_point -b test_branch
+echo 'A change is made in test_branch\n I think' > will_be_changed
+rm will_be_deleted
+git add .
+git commit -m "some very different changes"
+~~~
+
+And now we have the big moment of truth, the merge step.
+
+~~~bash
+git checkout master
+git merge test_branch
+~~~
+
+If you did everything right, you should now be looking at an error message *Merge conflict in will_be_changed*.
+Awesome!
+So what's up with that, and how can you fix it?
 
 
 ### Resolving Merge Conflicts
 
+Whenever you merge two branches that have both undergone changes since the branching point, there is a risk that the changes are incompatible.
+In the example above, we changed the content of *will_be_changed* in *master* and *test_branch*.
+We also deleted the file *will_be_deleted* in *test_branch*, but that's not a problem: since *will_be_deleted* has not changed at all in master branch, its deletion in the test_branch is the only modification since the branching point and can be applied automatically.
+For *will_be_changed*, on the other hand, it is not clear which change to apply because the two branches disagree on how the file should have developed since the branching point.
+So it is up to you to step in and decide which change to use.
 
-### Checking Out Commits Without Tags
+Open *will_be_changed* in a text editor of your choice.
+You should see the following:
+
+~~~
+<<<<<<< HEAD
+A change is made in test_branch
+=======
+Peter likes Mary, too
+>>>>>>> master
+I think
+~~~
+
+Above the `=======` you see the change from the branch you are trying to merge into *master*, below it is what this line currently looks like in *master*.
+Pick the line you want to keep, delete everything else between `<<<<<<< HEAD` and `>>>>>>> master` (including those lines themselves), then save the file.
+In the terminal, you now proceed exactly like after any other file editing session.
+
+~~~bash
+git add will_be_changed
+git commit -m "fixed Merge conflict"
+~~~
+
+Merge conflicts will arise once in a while when you use branches.
+This should not discourage you from using them, though --- branches are very powerful, and git is very good at auto-merging most changes.
+It is only when you keep working on two diverging versions of the same file that you run into Merge conflicts, and those occasions are rare.
+
+*Further reading:* Git branches are a very flexible tool and allow a variety of workflows for coding, collaborative writing, data archiving, and much more. A quick perusal of Google will provide tons of ideas.
