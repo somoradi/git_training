@@ -46,8 +46,27 @@ Getting Started
 
 ### Software Setup
 
-For this tutorial, we assume that you have the following tools installed: git, tig, and gitk.
-If you have access to the virtual machine image of the Stony Brook Computational Linguistics Lab, all these tools are already set up for you.
+For this tutorial, we assume that you have the following tools installed: git and gitk (or alternatively tig).
+Under Linux, you can use your package manager.
+For Debian and its derivatives like Ubuntu and Mint the command is
+
+~~~bash
+sudo aptitude install git gitk tig
+~~~
+
+or 
+
+~~~bash
+sudo apt-get install git gitk tig
+~~~
+
+For other OSs, you can either google setup instructions or use the virtual machine of the Computational Linguistics Lab, which already comes with all required tools pre-configured:
+
+1.  Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
+1.  Download the [virtual machine image](https://drive.google.com/open?id=0B09645QdWLiYWnEzcmdUNjEwd1U) and import it into VirtualBox.
+
+
+### Why Command-Line Tools
 
 There are many GUI tools for git, but we will mostly use the command line.
 This has several advantages:
