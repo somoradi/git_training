@@ -28,7 +28,7 @@ Introduction
        
        Git has a very different approach: it is open-source and thus available for free on a large number of platforms.
        It has an enormous community, which ensures that it will be supported for decades to come.
-       Git is not tied to a particular service infrastructure --- you can just use it locally without an internet connection, add an online service like Github or gitlab for distribution and backup purposes, or set up your own git server in a few minutes.
+       Git is not tied to a particular service infrastructure --- you can just use it locally without an internet connection, add an online service like GitHub or gitlab for distribution and backup purposes, or set up your own git server in a few minutes.
        Although it is designed with plain text files in mind, it works with all files (even binaries).
        Git works at the level of file systems rather than individual files so that you can keep track of the revision history of entire folders rather than just invidiual files.
        This is essential for any kind of project that involves more than one file, which includes writing research papers in LaTeX and all decently sized coding projects.
@@ -173,8 +173,8 @@ git status
 ~~~
 
 Git will give you quite a bit of information, most of which isn't relevant for us right now.
-Find the line that says *Untracked files:*, and look at the list below.
-You will see your `notes` file listed in read.
+Find the line that says *Untracked files:*, and look at the list below that.
+You will see your `notes` file listed in red.
 This means that git is aware that the file exists, but has not put it under version control because we did not tell it to.
 In order to do so, we must use git's `add` command.
 
@@ -188,14 +188,15 @@ Why didn't git add the file automatically?
 Because a repository may contain files we do not want to put under version control.
 For example, when you compile a LaTeX file the folder will be cluttered with files ending in `.aux`, `.log`, `.blg` and many others.
 Since those files are created automatically from your `.tex` file, there is no reason to put them under version control.
-But there's another reason, which brings us to the next important concept: *commits*.
 
+But there's another reason not to add files automatically, which brings us to the next important concept: *commits*.
 Git has a three stage concept for keeping track of revisions.
 A file starts out *unstaged*, which means that we currently do not record any changes to the file.
 By using `git add` we tell git to *stage* a file.
 Staging means that git records all changes that have been made to the file since the last entry in the revision history (if the file is completely new, the entire file is one big change).
 The final step is the *commit*, which creates a new entry in the revision history that records the status of all staged files.
-Commits are the backbone of git's revision history: a revision history is just a large graph whose nodes are commits, and each commit records the state of the files that were staged at this point.
+Commits are the backbone of git's revision history.
+A revision history in git is just a large graph whose nodes are commits, and each commit records the state of all staged files at this point.
 
 In our running example, we have used `git add notes` to stage the notes file.
 But we haven't commited it yet.
@@ -204,7 +205,7 @@ Type `git commit`.
 This will open a text editor where you are asked to enter a description of this commit.
 Since we are only adding the first version of `notes`, we enter *initial commit* and close the text editor.
 Alternatively, we could have also typed `git commit -m 'initial commit'` directly in the terminal.
-Either way we now have created a commit.
+Either way we now have a commit in our revision history.
 Run `git status` again and git will tell you *nothing to commit, working directory clean*.
 This means that you haven't made any changes since the most recent commit.
 
@@ -225,7 +226,7 @@ See [this blog post](https://robots.thoughtbot.com/5-useful-tips-for-a-better-co
 
 ### Ignoring Certain Files
 
-The `git add .` provides an easy means of staging all changed files.
+The `git add .` command provides an easy means of staging all changed files.
 But sometimes you do not want to add all files.
 LaTeX, for instance, produces many temporary files that would only end up cluttering your revision history.
 We can instruct git to ignore certain files by adding a hidden file `.gitignore` to the repository.
@@ -263,7 +264,7 @@ This file instructs git to ignore everything except files that end in a few tex-
 
 You now know how to use a repository on your computer, but git also allows you to sync repositories across computers.
 To do this, you need access to a git server.
-You can set up your own or use a service like *Github* or *gitlab*.
+You can set up your own or use a service like *GitHub* or *gitlab*.
 A repository that is stored on a server is called a *remote repository*.
 
 If you cloned a repository from somewhere else, the location you cloned it from is already set up as a remote repository with the name *origin*.
@@ -288,9 +289,9 @@ If you try doing the above with the training repository you cloned at the beginn
 That's because you only have read access to the remote repository, not write access --- it is not your repository after all, so why should you be allowed to change it?
 
 In order to use `git push`, you need a repository with write-access.
-We will create one on Github and add it as a remote repository.
-On the Github page for the repository, you can see a button named *Fork*.
-When you click it, Github will create a copy of the repository for your user account.
+We will create one on GitHub and add it as a remote repository.
+On the GitHub page for the repository, you can see a button named *Fork*.
+When you click it, GitHub will create a copy of the repository for your user account.
 In that forked repository, click on the Clone button and copy the URL.
 Make sure you are in your local repository in the terminal, then enter the following:
 
@@ -300,15 +301,19 @@ git remote add my_fork <URL to your repository>
 
 Now you can push your changes to your fork with `git push my_fork master`.
 And on any other computer you can get the most recent changes with `git pull my_fork master`.
-The Github repository thus acts as a central sharing point for synchronizing your work across multiple computers.
+The GitHub repository thus acts as a central sharing point for synchronizing your work across multiple computers.
+
+Of course you could have just created a completely new repository that is directly cloned from your fork.
+Inside that repository you would still use `git push origin master`.
+The `git remote add` command is only used when you want to add a remote to an existing repository.
 
 
-### Github Only: Pull Requests
+### GitHub Only: Pull Requests
 
 But what if you want to upload a change to the repository you do not have write access to?
 For example, there might be several typos that you fixed, so it would make sense to incorporate those changes into the official repository, not just your fork.
-For these situations, Github offers pull requests.
-Check [Github's tutorial](https://help.github.com/articles/about-pull-requests/) for more information.
+For these situations, GitHub offers pull requests.
+Check [GitHub's tutorial](https://help.github.com/articles/about-pull-requests/) for more information.
 
 
 
@@ -373,6 +378,7 @@ All the changes we have made since the *clean* tag have been completely wiped fr
 
 Ideally, you won't have to use `git reset` very often.
 In particular, do not use `git reset` to remove parts of the history that have already been synced to a remote repository.
+This can seriously mess up the revision history of anyone else who also has access to the repository!
 But sometimes you will want to experiment a bit and end up with crud in your history that should be excised before you push from your local repository to the remote.
 
 
@@ -491,3 +497,34 @@ This should not discourage you from using them, though --- branches are very pow
 It is only when you keep working on two diverging versions of the same file that you run into Merge conflicts, and those occasions are rare.
 
 *Further reading:* Git branches are a very flexible tool and allow a variety of workflows for coding, collaborative writing, data archiving, and much more. A quick perusal of Google will provide tons of ideas.
+
+
+### Branches With Remote Repositories
+
+Just like the master branch, branches you create can be synced to a remote repository with the `push` command.
+
+~~~bash
+git checkout test_branch
+git push -u origin test_branch
+~~~
+
+The `-u` parameter sets `origin test_branch` as the default push location for this branch.
+So when you are inside `test_branch`, a simple `git push` will sync changes to `origin test_branch`.
+But if are in the `master` branch instead, `git push` pushes to `origin master`.
+
+
+
+## Additional Material
+
+We have only covered the tip of the iceberg.
+Git is a very powerful tool, and there are tons of tutorials that go from the very basics to some seriously advanced stuff.
+Here's a small selection:
+
+- [Try Git](https://try.github.io/levels/1/challenges/1)  
+  GitHub's interactive git intro
+
+- [Atlassian](https://www.atlassian.com/git/tutorials)  
+  Covers some very subtle points of git such as the difference between `merge` and `rebase`, as well as `reset` versus `checkout` versus `revert`
+
+- [Git Documentation](https://git-scm.com/documentation)  
+  The official git documentation covers everything there is to know, and also lists various GUI tools and helper utilities.
