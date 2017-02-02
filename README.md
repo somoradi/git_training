@@ -133,11 +133,14 @@ Let us try to clone this very repository to your own computer so that you can ad
 
 1.  You now have a folder `git_training` inside your training folder.
     If you don't like that name, you can rename the folder.
-    The repository will still work fine.
+    You can also move it somewhere.
 
     ~~~bash
     mv git_training my_git_playground
     ~~~
+
+    Quite generally, you can treat the repository like any other folder and it will still work fine.
+    A folder that is a git repository is no different from any other folder as far as your OS is concerned.
 
 
 ### Basic Git Workflow
@@ -256,7 +259,7 @@ This file instructs git to ignore everything except files that end in a few tex-
 ~~~
 
 
-### Remote Repositories
+### Remote Repositories: Pull and Push
 
 You now know how to use a repository on your computer, but git also allows you to sync repositories across computers.
 To do this, you need access to a git server.
@@ -275,7 +278,13 @@ git pull origin master
 git push origin master
 ~~~
 
-If you try doing this with the training repository you cloned at the beginning of this tutorial, `git pull origin master` will work find but `git push origin master` will give you an error message.
+If you `git pull -u origin master` and `git push -u origin master`, git will remember that you want to pull/push from/to this remote repository and branch by default.
+From then on, you can just use `git pull` and `git push`.
+
+
+### Access Rights and Forking
+
+If you try doing the above with the training repository you cloned at the beginning of this tutorial, `git pull origin master` will work find but `git push origin master` will give you an error message.
 That's because you only have read access to the remote repository, not write access --- it is not your repository after all, so why should you be allowed to change it?
 
 In order to use `git push`, you need a repository with write-access.
